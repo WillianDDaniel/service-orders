@@ -2,6 +2,7 @@
 
 import { deleteServiceOrder, updateServiceOrderStatus } from "../actions/ServiceOrders";
 
+// Tipagem reutilizada
 type ServiceOrder = {
   id: number;
   name: string;
@@ -9,6 +10,7 @@ type ServiceOrder = {
   description: string | null;
   status: "in_progress" | "blocked" | "finished" | "ready_for_dev" | "canceled";
   tag: "SEO" | "DESIGN" | "CONFIG" | "FEATURE";
+  delivery_date: string | null;
   created_at: string;
 };
 
@@ -16,9 +18,9 @@ interface ServiceOrderCardProps {
   order: ServiceOrder;
   isExpanded: boolean;
   onToggle: () => void;
+  onEdit: (order: ServiceOrder) => void; // Nova prop
 }
 
-// Mapa de tradução para exibição
 const statusDisplay = {
   in_progress: "Em Andamento",
   blocked: "Bloqueado",
@@ -27,7 +29,7 @@ const statusDisplay = {
   canceled: "Cancelado"
 };
 
-export function ServiceOrderCard({ order, isExpanded, onToggle }: ServiceOrderCardProps) {
+export function ServiceOrderCard({ order, isExpanded, onToggle, onEdit }: ServiceOrderCardProps) {
   
   const getStatusColor = (status: string) => {
     if (status === "finished") return "bg-green-500/10 text-green-400 border-green-500/20";
@@ -35,11 +37,28 @@ export function ServiceOrderCard({ order, isExpanded, onToggle }: ServiceOrderCa
     return "bg-blue-500/10 text-blue-400 border-blue-500/20";
   };
 
+  function formatDisplayDate(dateValue: string | Date | null) {
+    if (!dateValue) return "Não definida";
+
+    if (dateValue instanceof Date) {
+      return dateValue.toLocaleDateString("pt-BR");
+    }
+
+    if (typeof dateValue === "string") {
+      const [year, month, day] = dateValue.split("-");
+      if (!year || !month || !day) return "Não definida";
+      return `${day}/${month}/${year}`;
+    }
+
+    return "Não definida";
+  }
+
+
   return (
     <div className={`bg-[#121214] border border-white/[0.08] rounded-xl transition-all shadow-lg overflow-hidden ${
       isExpanded ? "border-white/20" : "hover:border-white/[0.12]"
     }`}>
-      {/* Cabeçalho Clicável */}
+      {/* Cabeçalho */}
       <div onClick={onToggle} className="p-5 flex justify-between items-center cursor-pointer select-none group">
         <strong className="text-lg font-semibold text-white/95 group-hover:text-white transition-colors">
           {order.name}
@@ -60,7 +79,8 @@ export function ServiceOrderCard({ order, isExpanded, onToggle }: ServiceOrderCa
       {isExpanded && (
         <div className="px-5 pb-5 pt-0 animate-in slide-in-from-top-2 fade-in duration-200">
           <div className="border-t border-white/[0.08] pt-4 grid gap-4">
-            <div className="flex gap-4 text-sm">
+            
+            <div className="flex gap-6 text-sm flex-wrap">
               <div className="flex flex-col gap-1">
                 <span className="text-white/40 text-xs">Preço</span>
                 <span className="text-white/90 font-medium">R$ {order.price}</span>
@@ -68,6 +88,12 @@ export function ServiceOrderCard({ order, isExpanded, onToggle }: ServiceOrderCa
               <div className="flex flex-col gap-1">
                 <span className="text-white/40 text-xs">Tag</span>
                 <span className="text-white/90 font-medium">{order.tag}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-white/40 text-xs">Data de Entrega</span>
+                <span className={`font-medium ${order.delivery_date ? "text-white/90" : "text-white/30 italic"}`}>
+                   {formatDisplayDate(order.delivery_date)}
+                </span>
               </div>
             </div>
 
@@ -87,14 +113,22 @@ export function ServiceOrderCard({ order, isExpanded, onToggle }: ServiceOrderCa
                   <option value="ready_for_dev">Pronto p/ Dev</option>
                   <option value="canceled">Cancelado</option>
                 </select>
-                <button type="submit" className="bg-white/[0.08] text-white/90 border border-white/10 rounded-md px-3.5 py-2 text-xs font-medium cursor-pointer transition-all hover:bg-white/[0.12]">
-                  Atualizar Status
+                <button type="submit" className="cursor-pointer bg-white/[0.08] text-white/90 border border-white/10 rounded-md px-3.5 py-2 text-xs font-medium cursor-pointer transition-all hover:bg-white/[0.12]">
+                  Atualizar
                 </button>
               </form>
+              
+              {/* Botão de Editar */}
+              <button 
+                onClick={() => onEdit(order)}
+                className="cursor-pointer bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md px-3.5 py-2 text-xs font-medium cursor-pointer transition-all hover:bg-blue-500/20"
+              >
+                Editar
+              </button>
 
               <form action={deleteServiceOrder}>
                 <input type="hidden" name="id" value={order.id} />
-                <button type="submit" className="bg-red-500/10 text-red-400 border border-red-500/20 rounded-md px-3.5 py-2 text-xs font-medium cursor-pointer transition-all hover:bg-red-500/20">
+                <button type="submit" className="cursor-pointer bg-red-500/10 text-red-400 border border-red-500/20 rounded-md px-3.5 py-2 text-xs font-medium cursor-pointer transition-all hover:bg-red-500/20">
                   Excluir
                 </button>
               </form>

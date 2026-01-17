@@ -8,13 +8,14 @@ type ServiceOrder = {
   description: string | null;
   status: "in_progress" | "blocked" | "finished" | "ready_for_dev" | "canceled";
   tag: "SEO" | "DESIGN" | "CONFIG" | "FEATURE";
+  delivery_date: string | null;
   created_at: string;
 };
 
 export default async function Home() {
   // O fetch continua no Server Side para performance e SEO
   const rows = (await sql`
-    SELECT id, name, price, description, status, tag, created_at
+    SELECT id, name, price, description, delivery_date, status, tag, created_at
     FROM public.service_orders
     ORDER BY created_at DESC
   `) as unknown as ServiceOrder[];
