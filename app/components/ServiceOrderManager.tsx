@@ -62,8 +62,8 @@ export default function ServiceOrderManager({ orders }: { orders: ServiceOrder[]
 
   const tabs: { id: TabType; label: string }[] = [
     { id: "all", label: "Todos" },
-    { id: "in_progress", label: "Em Andamento" },
     { id: "ready_for_dev", label: "Pronto p/ Dev" },
+    { id: "in_progress", label: "Em Andamento" },
     { id: "blocked", label: "Bloqueados" },
     { id: "finished", label: "Finalizados" },
     { id: "canceled", label: "Cancelados" },
