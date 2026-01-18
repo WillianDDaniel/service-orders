@@ -1,3 +1,5 @@
+// app/auth/auth-view-client.tsx
+
 "use client";
 
 import dynamic from "next/dynamic";

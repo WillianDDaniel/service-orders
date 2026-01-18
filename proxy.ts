@@ -6,7 +6,8 @@ export default neonAuthMiddleware({
 
 export const config = {
   matcher: [
-    "/",              // protege home
-    "/orders/:path*", // protege suas rotas do app
+    "/",
+    "/projects/:path*",
+    "/orders/:path*",
   ],
 };

@@ -12,6 +12,7 @@ export async function Header() {
     <header className="app-header">
       <nav>
         <Link href="/">Home</Link>
+        <Link href="/projects">Projetos</Link>
         {hasSession ? <LogoutButton /> : null}
       </nav>
     </header>
